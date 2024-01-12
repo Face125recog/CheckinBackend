@@ -123,7 +123,7 @@ class FacesStorge():
             new_path = self.path + '/' +str(start) + '.jpg'
             start = start + 1
             face_trans.path_tran(new_path)
-            print(new_path)
+            #print(new_path)
             face_trans.FaceTrans()
 
 
@@ -136,7 +136,7 @@ class UserImformation():
         result = self.db.list_sum(self.employ)
         return result
 
-#我懒
+#偷懒后遗症
     def return_all_user(self):
         count = self.db.list_sum(self.employ)
         list = []

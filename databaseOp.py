@@ -1,17 +1,47 @@
 import pymysql
 import datetime
+
+import pymysql
+import configparser
+
+conf = configparser.ConfigParser()
+conf.read('conf/dataBase.conf', encoding='gbk')
+host = conf.get("mysql", 'host')
+user = conf.get("mysql", 'user')
+password = conf.get("mysql", 'password')
+db = conf.get("mysql", 'db')
+port = int(conf.get("mysql", 'port'))
+charset = conf.get("mysql", 'charset')
+
 class DbOperate():
 
     def __init__(self):
-        self.conn=pymysql.connect(host='localhost',
-                               user='root',
-                               password='123456',
-                               db='facereg',
-                               port=3306,
-                               charset='utf8'
+        self.conn=pymysql.connect(
+                        host=host,
+                        user=user,
+                        password=password,
+                        db=db,
+                        port=port,
+                        charset=charset
                                )
 
-#返回用户身份数据，格式[name, id]，这个得改一下但懒得改了，这样子就不用改index了。
+    #先注释掉吧，逻辑不一样。。。重新整没时间了。。。。
+    # def execute_with_bool(self,sql_str, args=()):
+    #     cursor = self.conn.cursor()
+    #     try:
+    #         cursor.execute(sql_str, args)
+    #         self.conn.commit()
+    #         return True
+    #     except Exception as e:
+    #         self.conn.rollback()
+    #         print(e)
+    #         return False
+    #     finally:
+    #         cursor.close()
+
+
+
+#由于每步都偷懒，所以实际上要改一下。但懒得改了，而且这样子就显然不需要+1 -1了。
     def find_who(self, index):
 
         cur = self.conn.cursor()
@@ -96,6 +126,7 @@ class DbOperate():
             return 1
         cur.close()
 
+    #额。。。。。。。。
     def close_connection(self):
         self.conn.close()
 

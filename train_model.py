@@ -43,7 +43,7 @@ def GetDataset(imgDataDir):
             hwdata.append(imgarray)  # 添加新的照片的二维数组
 
     hwdata = np.array(hwdata)
-    return hwdata, hwLabels, 6  # 分别返回了所有人脸的二维数组、每个照片主人的序号、6是类别数
+    return hwdata, hwLabels, m  # 分别返回了所有人脸的二维数组、每个照片主人的序号、m是类别数
 
 
 class MyCNN(object):
@@ -57,9 +57,9 @@ class MyCNN(object):
         self.dataset = dataset
 
     def build_model(self):  # 建立Sequential模型，并赋予参数
-        print('| Step2 |: Init CNN model...')
+       # print('| Step2 |: Init CNN model...')
         self.model = Sequential()  # 建立模型
-        print('self.dataset.X_train.shape[1:]', self.dataset.X_train.shape[1:])  # 这里看不懂...
+       # print('self.dataset.X_train.shape[1:]', self.dataset.X_train.shape[1:])  # 这里看不懂...
         self.model.add(Convolution2D(filters=32,  # 过滤器个数
                                      kernel_size=(5, 5),  # 卷积核尺寸
                                      padding='same',  # 边缘填充0
@@ -87,7 +87,7 @@ class MyCNN(object):
         self.model.summary()  # 定义完模型后，用该函数输出模型结构信息
 
     def train_model(self):  # 模型训练
-        print('| Step3 |: Train CNN model...')
+       # print('| Step3 |: Train CNN model...')
         self.model.compile(optimizer='adam',
                            loss='categorical_crossentropy',
                            metrics=['accuracy'])
@@ -98,15 +98,15 @@ class MyCNN(object):
 
     def evaluate_model(self):  # 显示loss和精度
         loss, accuracy = self.model.evaluate(self.dataset.X_test, self.dataset.Y_test)
-        print('| Step4 |: Evaluate performance...')
-        print('============================================')
-        print('Loss Value is:', loss)
-        print('Accuracy Value is:', accuracy)
+        # print('| Step4 |: Evaluate performance...')
+        # print('============================================')
+        # print('Loss Value is:', loss)
+        # print('Accuracy Value is:', accuracy)
 
     def save(self, file_path=FILE_PATH):  # 保存模型
-        print('| Step5 |: Save model...')
+       # print('| Step5 |: Save model...')
         self.model.save(file_path)
-        print('Model ', file_path, 'is successfully saved.')
+      #  print('Model ', file_path, 'is successfully saved.')
 
 
 class DataSet(object):
@@ -149,4 +149,4 @@ def train_the_model(path):
     model.evaluate_model()
     model.save()
 
-train_the_model("faces")
+

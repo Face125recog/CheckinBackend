@@ -50,7 +50,7 @@ def FaceMatch():
     photo = FaceProcess(face)  # 图片修改
     photo.FaceTrans()
     tuple_name_i, confidence = photo.IdFace()  # 返回id
-    if float(mini_confidence) >= confidence:
+    if float(0.75) >= confidence:
         return_dict['errty'] = 'Low confidence'
         return_dict['errmsg'] = 'This is  a picture with  low confidence to be anyone in database'
         return json.dumps(return_dict, ensure_ascii=False)
@@ -85,8 +85,8 @@ def user_register_upload():
     get_Data = json.loads(get_Data)
     faces = get_Data['faces']
     user = get_Data['user']
-    print(faces)
-    print(user)
+    # print(faces)
+    # print(user)
     user_faces = FacesStorge(int(user['identity']), user['name'], faces)
     data = user_faces.add_user()
     if data == 1:

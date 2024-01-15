@@ -9,9 +9,9 @@ from databaseOp import DbOperate
 import cv2
 import numpy as np
 import shutil
-import tensorflow
-from tensorflow.python.keras.models import load_model
 from tensorflow import keras
+
+from tensorflow.python.keras.models import load_model
 from train_model import train_the_model
 
 #考虑到复写需求，照片片不够可以录两次，以及二次识别删除时可以用到这些。
@@ -69,8 +69,9 @@ class FaceProcess():
         img.save(self.path)
         return image_data
 
-    def IdFace(self):
+    def user_identity(self):
         model = load_model('face_recognition.h5')  # 加载模型
+        #model = keras.models.load_model('face_recognition.h5')
         photo = cv2.imread(self.path)
         resized_photo = cv2.resize(photo, (100, 100))  # 调整图片大小
         recolord_photo = cv2.cvtColor(resized_photo, cv2.COLOR_BGR2GRAY)  # 调整为灰度图
@@ -78,12 +79,13 @@ class FaceProcess():
         recolord_photo = recolord_photo / 255.0
         result = model.predict(recolord_photo)  # 人物预测，返回试验集各个类别的概率
         print("result：", result)
-        max_index = np.argmax(result)  # print(max(result))
+        max_index = np.argmax(result)+1
+        print("max",max_index)
         confidence = result[0][max_index]
 
-        print(confidence)
+        print("confidence:", confidence)
         db = DbOperate()
-        result = db.find_who(max_index)
+        result = db.user_identity(max_index)
         print(result)
         db.close_connection()
         del db
@@ -141,17 +143,20 @@ class UserImformation():
         count = self.db.list_sum(self.employ)
         list = []
         index = 0
+        allUser = self.db.get_all_user()
+        print("all_user:", allUser)
         while(index < count):
-            name, identity = self.db.find_who(index)
 
-            data = {'name': name,
-                    'identity': identity
+            data = {'name': allUser[index][1],
+                    'identity': allUser[index][0]
                     }
 
             list.append(data)
             index = index +1
 
         return list
+
+    #def return_page_user(self, ):
 
 def delete_floder(path):  #删除该路径以及所有内部所有文件
     for filename in os.listdir(path):
@@ -168,7 +173,7 @@ def delete_user(id):
     flag = db.delete_employee(id)    #数据库删除
     path = "faces/"+str(int(id)-1)   #别忘了-1
     print(path)
-    #flag为则 1 数据库无该数据 返回1 数据不存在
+    #flag为则Ture 数据库无该数据 返回Ture 数据不存在
     if flag:
         return flag
     else:

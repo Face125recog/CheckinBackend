@@ -26,35 +26,47 @@ class DbOperate():
                                )
 
     #先注释掉吧，逻辑不一样。。。重新整没时间了。。。。
-    # def execute_with_bool(self,sql_str, args=()):
-    #     cursor = self.conn.cursor()
-    #     try:
-    #         cursor.execute(sql_str, args)
-    #         self.conn.commit()
-    #         return True
-    #     except Exception as e:
-    #         self.conn.rollback()
-    #         print(e)
-    #         return False
-    #     finally:
-    #         cursor.close()
+    def execute_with_bool(self, sql_str, args=()):
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute(sql_str, args)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            self.conn.rollback()
+            print(e)
+            return False
+        finally:
+            cursor.close()
 
 
 
-#由于每步都偷懒，所以实际上要改一下。但懒得改了，而且这样子就显然不需要+1 -1了。
-    def find_who(self, index):
+#返回全体人员信息
+    def get_all_user(self):
 
         cur = self.conn.cursor()
         try:
             cur.execute('SELECT * FROM employee')
             result = cur.fetchall()
-            who = result[index]   #这里index是0，列表从零开始，不用加1了，查询全部，然后在找，好像没区别吧。
+            print("result:", result)
         except Exception as e:
             print(e)
 
         cur.close()
-        return who[1], who[0]
+        return result
 
+    def user_identity(self, index):
+        sql_str = "SELECT * FROM employee WHERE employee.ID=" + str(index)
+        cur = self.conn.cursor()
+        try:
+            result = cur.execute(sql_str)
+            result = cur.fetchall()
+            print(result)
+        except Exception as e:
+            print("error",e)
+
+        cur.close()
+        return result
 
 #插入用户签到数据
     def register_date(self, id, name, tt):

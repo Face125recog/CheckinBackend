@@ -13,19 +13,20 @@ CORS(app)
 # 只接受POST方法访问
 def admin_login():
     payload = request.json
+    print(payload)
     if payload["name"] == "admin" and payload["password"] == "12345":
         return flask.jsonify({
             "data": "12345-12345-12345-12345"
         })
     else:
         return flask.jsonify({
-            "errty": "unknow user or password",
+            "errty": "未知名称或者密码不匹配",
             "errmsg": "error"
-        })
+        }), 401
 
 
 @app.route("/check_in", methods=["POST"])
-def FaceMatch():
+def face_match():
     # 默认返回内容
     return_dict = {'data': {
         'name': 'None',
@@ -33,23 +34,17 @@ def FaceMatch():
     },
         'errty': 'null',
         'errmsg': "Null"}
-    # 判断传入的json数据是否为空
-    # if request.get_data() is None:
-    #     return_dict['errty'] = 'The parameter is empty'
-    #     return_dict['errmsg'] = 'Request to fill in the correct parameters '
-    #     return json.dumps(return_dict, ensure_ascii=False)
 
     get_Data = request.get_data()
-
     get_Data = json.loads(get_Data)
-    # print(get_Data)
-    # print(type(get_Data))
+
     face = get_Data['face']
+
     mini_confidence = get_Data['min_confidence']
     print(mini_confidence)
     photo = FaceProcess(face)  # 图片修改
     photo.FaceTrans()
-    tuple_name_i, confidence = photo.IdFace()  # 返回id
+    tuple_name_i, confidence = photo.user_identity()  # 返回id
     if float(0.75) >= confidence:
         return_dict['errty'] = 'Low confidence'
         return_dict['errmsg'] = 'This is  a picture with  low confidence to be anyone in database'
@@ -103,7 +98,7 @@ def user_register_upload():
 
 
 @app.route("/user/delete", methods=["POST"])
-def delete_user_byID():
+def delete_user_by_id():
     args = request.args.get('uid', '')
     delete_user(args)
     train_model()
@@ -117,4 +112,5 @@ def welcome():
 
 if __name__ == "__main__":
     #app.run(host='192.168.1.118', debug=True)
+    #app.run(host='10.194.0.180', debug=True)
     app.run(debug=True)
